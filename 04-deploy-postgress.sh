@@ -1,0 +1,1 @@
+oc apply -k ./deployments/postgres -n privileged-namespace
