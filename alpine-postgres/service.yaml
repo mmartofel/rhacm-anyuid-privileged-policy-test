@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: alpine-postgres
+  labels:
+    app: alpine-postgres
+    app.kubernetes.io/component: alpine-postgres
+    app.kubernetes.io/instance: alpine-postgres
+spec:
+  ports:
+  - name: 5432-tcp
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: alpine-postgres
+  type: ClusterIP
+  sessionAffinity: None

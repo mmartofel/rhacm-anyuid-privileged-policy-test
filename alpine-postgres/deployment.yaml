@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.openshift.io/vcs-uri: 'https://github.com/mmartofel/kuberneter-probes/tree/main/deployment/alpine-postgres'
+  labels:
+    app: alpine-postgres
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: alpine-postgres
+    app.kubernetes.io/part-of: DATA_SUBSYSTEM
+    app.openshift.io/runtime: postgresql
+  name: alpine-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alpine-postgres
+  template:
+    metadata:
+      labels:
+        app: alpine-postgres
+    spec:
+      containers:
+      - name: alpine-postgres
+        imagePullPolicy: IfNotPresent
+        image: postgres:13-alpine3.22
+        ports:
+          - containerPort: 5432
+            protocol: TCP
+        envFrom:
+          - configMapRef:
+             name: postgres-setup-configmap
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "200m"
+      serviceAccountName: anyuid-sa

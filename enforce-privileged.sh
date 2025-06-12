@@ -1,0 +1,1 @@
+oc label ns privileged-namespace pod-security.kubernetes.io/enforce=privileged

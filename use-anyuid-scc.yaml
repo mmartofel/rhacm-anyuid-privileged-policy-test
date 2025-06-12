@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: use-anyuid-scc
+subjects:
+- kind: ServiceAccount
+  name: anyuid-sa
+  namespace: privileged-namespace
+roleRef:
+  kind: ClusterRole
+  name: system:openshift:scc:anyuid
