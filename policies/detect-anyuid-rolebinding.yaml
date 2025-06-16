@@ -1,0 +1,57 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: detect-anyuid-rolebinding
+  namespace: open-cluster-management-policies
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  disabled: false
+  remediationAction: inform
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: anyuid-rolebinding-exists
+        spec:
+          remediationAction: inform
+          severity: high
+          namespaceSelector:
+            exclude: []
+            include: ["*"]
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: RoleBinding
+                roleRef:
+                  name: system:openshift:scc:anyuid
+          evaluationInterval:
+            compliant: 1m
+            noncompliant: 1m
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: detect-anyuid-rolebinding-placement
+  namespace: open-cluster-management-policies
+spec:
+  clusterSets:
+    - global
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: detect-anyuid-rolebinding-binding
+  namespace: open-cluster-management-policies
+placementRef:
+  name: detect-anyuid-rolebinding-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: detect-anyuid-rolebinding
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

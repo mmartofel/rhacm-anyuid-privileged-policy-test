@@ -1,8 +1,8 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: disallow-root-user-pods-gatekeeper
-  namespace: policies
+  name: detect-root-user-pods
+  namespace: open-cluster-management-policies
 spec:
   disabled: false
   remediationAction: inform
@@ -11,31 +11,79 @@ spec:
         apiVersion: templates.gatekeeper.sh/v1beta1
         kind: ConstraintTemplate
         metadata:
-          name: k8sdisallowrootuser
+          name: k8sdetectanyuidscc
         spec:
           crd:
             spec:
               names:
-                kind: K8sDisallowRootUser
+                kind: K8sDetectAnyuidScc
           targets:
             - target: admission.k8s.gatekeeper.sh
               rego: |
-                package k8sdisallowrootuser
+                package k8sdetectanyuidscc
+
+                is_system_namespace(ns) {
+                  startswith(ns, "kube-")
+                }
+                is_system_namespace(ns) {
+                  startswith(ns, "openshift-")
+                }
+                is_system_namespace(ns) {
+                  ns == "kube-system"
+                }
+                is_system_namespace(ns) {
+                  ns == "openshift"
+                }
+                is_system_namespace(ns) {
+                  ns == "default"
+                }
+
+                has_anyuid_annotation(meta) {
+                  meta.annotations["openshift.io/scc"] == "anyuid"
+                }
 
                 violation[{"msg": msg}] {
                   input.review.kind.kind == "Pod"
-                  some i
-                  container := input.review.object.spec.containers[i]
-                  container.securityContext.runAsUser == 0
-                  msg := sprintf("Container '%v' is running as root user (UID 0).", [container.name])
+                  ns := input.review.object.metadata.namespace
+                  not is_system_namespace(ns)
+                  has_anyuid_annotation(input.review.object.metadata)
+                  msg := sprintf("Pod '%v' in namespace '%v' is running with annotation openshift.io/scc=anyuid.", [input.review.object.metadata.name, ns])
                 }
     - objectDefinition:
         apiVersion: constraints.gatekeeper.sh/v1beta1
-        kind: K8sDisallowRootUser
+        kind: K8sDetectAnyuidScc
         metadata:
-          name: disallow-root-user
+          name: detect-anyuid-scc
         spec:
           match:
             kinds:
               - apiGroups: [""]
                 kinds: ["Pod"]
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: detect-root-user-pods-placement
+  namespace: open-cluster-management-policies
+spec:
+  tolerations:
+    - key: cluster.open-cluster-management.io/unreachable
+      operator: Exists
+    - key: cluster.open-cluster-management.io/unavailable
+      operator: Exists
+  clusterSets:
+    - global
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: detect-root-user-pods-placement-binding
+  namespace: open-cluster-management-policies
+placementRef:
+  name: detect-root-user-pods-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: detect-root-user-pods
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
