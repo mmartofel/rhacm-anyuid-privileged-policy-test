@@ -39,9 +39,7 @@ Next, create a new namespace and configure it to run a privileged Postgres pod:
 
 - [`alpine-postgres/`](alpine-postgres/deployment.yaml): Kubernetes manifests for the PostgreSQL deployment.
 - [`role-bindings/`](role-bindings/use-anyuid-scc.yaml): Role bindings for SCCs.
-- [`default-service-account/`](default-service-account/anyuid-add-to-default-sa.sh): Scripts to modify the default service account.
-- [`policy.yaml`](policy.yaml): Gatekeeper policy to detect pods running as root or with `anyuid` SCC.
-- [`privileged.yaml`](privileged.yaml): Policy to detect namespaces or rolebindings with privileged SCCs.
+- [`default-service-account/`](default-service-account/anyuid-add-to-default-sa.sh): Scripts to modify the default service account instead of dedicated service account
 
 ## Security Notes
 
