@@ -2,7 +2,11 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: detect-root-user-pods
-  namespace: open-cluster-management-policies
+  namespace: open-cluster-management-global-set
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
 spec:
   disabled: false
   remediationAction: inform
@@ -59,6 +63,9 @@ spec:
             kinds:
               - apiGroups: [""]
                 kinds: ["Pod"]
+          evaluationInterval:
+            compliant: 1m
+            noncompliant: 1m
 ---
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
