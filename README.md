@@ -51,6 +51,8 @@ after some time policies start to display violations at the cluster you installe
 
 ![screenshot](images/5.png)
 
+Then once you delete whole 'privileged-namespace' policy violations will be gone.
+
 ## Repository Structure
 
 - [`alpine-postgres/`](alpine-postgres/deployment.yaml): Kubernetes manifests for the PostgreSQL deployment.
