@@ -71,7 +71,7 @@ apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: detect-root-user-pods-placement
-  namespace: open-cluster-management-policies
+  namespace: open-cluster-management-global-set
 spec:
   tolerations:
     - key: cluster.open-cluster-management.io/unreachable
@@ -85,7 +85,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: detect-root-user-pods-placement-binding
-  namespace: open-cluster-management-policies
+  namespace: open-cluster-management-global-set
 placementRef:
   name: detect-root-user-pods-placement
   apiGroup: cluster.open-cluster-management.io

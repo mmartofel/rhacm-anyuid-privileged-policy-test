@@ -9,14 +9,18 @@ By default, OpenShift restricts containers from running as the root user. This e
 ## Prerequisites
 
 - Access to an OpenShift cluster with cluster-admin privileges.
-- [Red Hat Advanced Cluster Security for Kubernetes](https://www.redhat.com/en/technologies/cloud-computing/openshift/advanced-cluster-security) and [Red Hat Advanced Cluster Management](https://www.redhat.com/en/technologies/management/advanced-cluster-management) installed.
-- `oc` and `kubectl` CLI tools installed and configured.
+- install Red Hat Advanced Cluster Management for Kubernetes operator
+- `oc` or `kubectl` CLI tools installed and configured.
 
 ## Quick Start
 
 ### 1. Set Up Security Policies
 
-First, set up Red Hat Advanced Cluster Security for Kubernetes and run the following scripts to install the required Gatekeeper operator and detection policies:
+First, set up Red Hat Advanced Cluster Management for Kubernetes, from the start you will not see any policies.
+
+![screenshot](images/1.png)
+
+and run the following scripts to install the required Gatekeeper operator and detection policies:
 
 ```sh
 ./01-install-gatekeeper-operator-policy.sh
