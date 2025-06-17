@@ -20,13 +20,17 @@ First, set up Red Hat Advanced Cluster Management for Kubernetes, from the start
 
 ![screenshot](images/1.png)
 
-and run the following scripts to install the required Gatekeeper operator and detection policies:
+then run first 3 scripts to install the required Gatekeeper operator (which could be a showcase how to enforce operator existance at the clusters) and detection policies:
 
 ```sh
 ./01-install-gatekeeper-operator-policy.sh
 ./02-detect-anyuid-rolebinding-policy.sh
 ./03-detect-root-user-pods-policy.sh
 ```
+
+after a while you will see three new policies not reporting any violations
+
+![screenshot](images/2.png)
 
 ### 2. Deploy a Privileged PostgreSQL Pod
 
@@ -38,6 +42,14 @@ Next, create a new namespace and configure it to run a privileged Postgres pod:
 ./06-role-bindings.sh
 ./07-deploy-postgress.sh
 ```
+
+after some time policies start to display violations at the cluster you installed postgres on, inspect details at RHACM console
+
+![screenshot](images/3.png)
+
+![screenshot](images/4.png)
+
+![screenshot](images/5.png)
 
 ## Repository Structure
 
